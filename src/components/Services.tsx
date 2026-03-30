@@ -6,8 +6,7 @@ const servicesList = [
     description:
       "Tetos lisos e nivelados, perfeitos para embutir iluminação e esconder fiações.",
     icon: <Layers className="w-8 h-8 text-white" />,
-    image:
-      "https://www.decorfacil.com/wp-content/uploads/2018/02/20180220teto-de-gesso-foto2.jpg",
+    image: "/images/teto-pronto4.jpeg",
   },
   {
     title: "Sancas Iluminadas",
@@ -30,8 +29,7 @@ const servicesList = [
     description:
       "Móveis planejados em gesso para TVs, livros e decorações, aproveitando cada espaço.",
     icon: <Home className="w-8 h-8 text-white" />,
-    image:
-      "https://www.decorfacil.com/wp-content/uploads/2017/03/20170310nicho-para-quarto-de-casal-23.jpg",
+    image: "/images/servico.jpeg",
   },
 ];
 

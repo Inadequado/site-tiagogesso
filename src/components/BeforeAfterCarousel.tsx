@@ -14,22 +14,26 @@ const services: Service[] = [
   {
     title: "Forro de Drywall",
     description: "Instalação completa com nivelamento e acabamento impecável.",
-    beforeImage:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    afterImage:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    beforeImage: "/images/fita-led - Copia.jpeg",
+    afterImage: "/images/banner1.jpeg",
   },
   {
-    title: "Divisória de Ambiente",
+    title: "Rebaixamento em Drywall, primeira etapa.",
     description: "Separação de ambientes com drywall e isolamento acústico.",
-    beforeImage: "/images/divisoria-antes.jpg",
-    afterImage: "/images/divisoria-depois.jpg",
+    beforeImage: "/images/antes-2.jpeg",
+    afterImage: "/images/depois-2.jpeg",
   },
   {
-    title: "Parede em Gesso",
+    title: "Rebaixamento em Drywall, finalizado, pronto para pintura.",
+    description: "Separação de ambientes com drywall e isolamento acústico.",
+    beforeImage: "/images/teto-preacabamento.jpeg",
+    afterImage: "/images/teto-pronto.jpeg",
+  },
+  {
+    title: "Detalhe em cimentício",
     description: "Revestimento e acabamento em gesso liso de alta qualidade.",
-    beforeImage: "/images/gesso-antes.jpg",
-    afterImage: "/images/gesso-depois.jpg",
+    beforeImage: "/images/antes1.jpeg",
+    afterImage: "/images/depois1.jpeg",
   },
 ];
 

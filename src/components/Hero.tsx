@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"; // Importamos os hooks necessários
 
 // 1. Lista de imagens reais do portfólio dele (coloque os links/caminhos aqui)
 const images = [
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+  "/images/banner1.jpeg",
   "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
   "https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
 ];
@@ -53,10 +53,10 @@ export function Hero() {
           <div className="relative z-10 text-center flex flex-col items-center w-full px-6">
             {/* TEXTOS PRINCIPAIS */}
             <div className="py-40 md:py-60">
-              <h1 className="text-2xl md:text-5xl font-extrabold mb-4 leading-tight drop-shadow-lg">
+              <h1 className="text-2xl md:text-5xl font-extrabold mb-4 m-auto leading-tight drop-shadow-lg">
                 TRANSFORME SEU AMBIENTE
               </h1>
-              <p className="text-sm md:text-lg text-slate-100 mb-8 max-w-xl drop-shadow-md">
+              <p className="text-sm m-auto md:text-lg text-slate-100 mb-8 max-w-xl drop-shadow-md">
                 Especialistas em sancas, rebaixamentos e divisórias em drywall.
               </p>
             </div>
