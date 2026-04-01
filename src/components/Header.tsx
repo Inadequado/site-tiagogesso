@@ -22,11 +22,13 @@ export function Header() {
   };
 
   return (
-    <header className={`sticky z-50 transition-all duration-300 ease-in-out ${isScrolled ? "top-4" : "top-0"}`}>
+    <header
+      className={`sticky z-50 transition-all duration-300 ease-in-out ${isScrolled ? "top-0" : "top-0"}`}
+    >
       <div
         className={`flex justify-between items-center relative transition-all duration-300 ease-in-out ${
           isScrolled
-            ? "mx-auto lg:max-w-[90%] w-[calc(100%-2rem)] bg-gray-200/90 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3"
+            ? "mx-auto lg:max-w-[90%] w-[calc(100%-2rem)] bg-gray-200/90 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 top-4"
             : "bg-gray-200 shadow-md rounded-b-2xl px-4 py-4"
         }`}
       >
