@@ -1,5 +1,5 @@
 import { Menu, X } from "lucide-react"; // Adicionamos Menu (hambúrguer) e X (fechar)
-import { useState } from "react"; // Importamos o hook de estado do React
+import { useState, useEffect } from "react"; // Importamos o hook de estado do React
 import Logo from "../assets/logo.png";
 export function Header() {
   // Aqui criamos a nossa "memória".
@@ -7,14 +7,29 @@ export function Header() {
   // setIsMenuOpen é a função que usamos para mudar esse valor.
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Estado que detecta se a página foi rolada
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // Uma função simples para fechar o menu quando o usuário clicar em um link
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
 
   return (
-    <header className="bg-gray-200 shadow-md sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center relative">
+    <header className={`sticky z-50 transition-all duration-300 ease-in-out ${isScrolled ? "top-4" : "top-0"}`}>
+      <div
+        className={`flex justify-between items-center relative transition-all duration-300 ease-in-out ${
+          isScrolled
+            ? "mx-auto lg:max-w-[90%] w-[calc(100%-2rem)] bg-gray-200/90 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3"
+            : "bg-gray-200 shadow-md rounded-b-2xl px-4 py-4"
+        }`}
+      >
         {/* LADO ESQUERDO: A Logo */}
         <a href="#" className="flex items-center gap-2 text-blue-600 z-50">
           <img src={Logo} className="w-24" />
@@ -51,7 +66,13 @@ export function Header() {
       {/* MENU DO CELULAR (DROPDOWN) */}
       {/* Aqui verificamos: isMenuOpen é verdadeiro? Se sim, mostre essa div abaixo. Se não, esconda. */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg border-t border-gray-100 flex flex-col py-4 px-6 gap-4 z-40">
+        <div
+          className={`md:hidden flex flex-col py-4 px-6 gap-4 z-40 bg-white shadow-lg border-t border-gray-100 transition-all duration-300 ${
+            isScrolled
+              ? "mx-auto lg:max-w-[90%] w-[calc(100%-2rem)] mt-1 rounded-2xl"
+              : "absolute top-full left-0 w-full"
+          }`}
+        >
           <a
             href="#servicos"
             onClick={closeMenu}
