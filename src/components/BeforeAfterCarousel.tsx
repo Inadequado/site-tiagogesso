@@ -1,46 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ChevronsLeftRight } from "lucide-react";
+import { useBeforeAfter } from "../hooks/useBeforeAfter";
+import type { BeforeAfterItem } from "../hooks/useBeforeAfter";
 
-interface Service {
-  title: string;
-  description: string;
-  beforeImage: string;
-  afterImage: string;
-  beforeLabel?: string;
-  afterLabel?: string;
-}
-
-const services: Service[] = [
-  {
-    title: "Forro de Drywall",
-    description: "Instalação completa com nivelamento e acabamento impecável.",
-    beforeImage: "/images/fita-led - Copia.jpeg",
-    afterImage: "/images/banner1.jpeg",
-  },
-  {
-    title: "Rebaixamento em Drywall, primeira etapa.",
-    description: "Separação de ambientes com drywall e isolamento acústico.",
-    beforeImage: "/images/antes-2.jpeg",
-    afterImage: "/images/depois-2.jpeg",
-  },
-  {
-    title: "Rebaixamento em Drywall, finalizado, pronto para pintura.",
-    description: "Separação de ambientes com drywall e isolamento acústico.",
-    beforeImage: "/images/teto-preacabamento.jpeg",
-    afterImage: "/images/teto-pronto.jpeg",
-  },
-  {
-    title: "Detalhe em cimentício",
-    description: "Revestimento e acabamento em gesso liso de alta qualidade.",
-    beforeImage: "/images/antes1.jpeg",
-    afterImage: "/images/depois1.jpeg",
-  },
-];
-
-function BeforeAfterSlider({ service }: { service: Service }) {
+function BeforeAfterSlider({ item }: { item: BeforeAfterItem }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [sliderPct, setSliderPct] = useState(50);
   const dragging = useRef(false);
+
   const updateSlider = useCallback((clientX: number) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -74,7 +41,8 @@ function BeforeAfterSlider({ service }: { service: Service }) {
   useEffect(() => {
     const timer = setTimeout(() => setSliderPct(50), 0);
     return () => clearTimeout(timer);
-  }, [service]);
+  }, [item]);
+
   return (
     <div
       ref={containerRef}
@@ -88,7 +56,7 @@ function BeforeAfterSlider({ service }: { service: Service }) {
       }}
     >
       <img
-        src={service.afterImage}
+        src={item.afterUrl}
         alt="depois"
         className="absolute inset-0 w-full h-full object-cover"
         draggable={false}
@@ -99,7 +67,7 @@ function BeforeAfterSlider({ service }: { service: Service }) {
         style={{ clipPath: `inset(0 ${100 - sliderPct}% 0 0)` }}
       >
         <img
-          src={service.beforeImage}
+          src={item.beforeUrl}
           alt="antes"
           className="absolute inset-0 w-full h-full object-cover"
           draggable={false}
@@ -107,10 +75,10 @@ function BeforeAfterSlider({ service }: { service: Service }) {
       </div>
 
       <span className="absolute top-3 left-3 z-10 text-xs font-medium bg-black/50 text-white px-2.5 py-1 rounded-md pointer-events-none">
-        {service.beforeLabel ?? "Antes"}
+        Antes
       </span>
       <span className="absolute top-3 right-3 z-10 text-xs font-medium bg-white/85 text-neutral-800 px-2.5 py-1 rounded-md pointer-events-none">
-        {service.afterLabel ?? "Depois"}
+        Depois
       </span>
 
       <div
@@ -129,32 +97,40 @@ function BeforeAfterSlider({ service }: { service: Service }) {
 }
 
 export default function BeforeAfterCarousel() {
+  const { items, carregando } = useBeforeAfter();
   const [current, setCurrent] = useState(0);
-  const total = services.length;
 
-  const prev = () => setCurrent((c) => (c - 1 + total) % total);
-  const next = () => setCurrent((c) => (c + 1) % total);
+  const prev = () => setCurrent((c) => (c - 1 + items.length) % items.length);
+  const next = () => setCurrent((c) => (c + 1) % items.length);
+
+  if (carregando)
+    return (
+      <section className="py-5 px-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="text-neutral-400">Carregando...</p>
+        </div>
+      </section>
+    );
+
+  if (items.length === 0) return null;
 
   return (
     <section className="py-5 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          {/* <h2 className="text-3xl font-semibold text-neutral-900 mb-2">
-            Nossos Serviços
-          </h2> */}
-          <p className="text-neutral-500 text-lg ">
+          <p className="text-neutral-500 text-lg">
             Arraste para comparar o antes e depois de cada serviço.
           </p>
         </div>
 
-        <BeforeAfterSlider service={services[current]} />
+        <BeforeAfterSlider item={items[current]} />
 
         <div className="text-center mt-5">
           <p className="text-lg font-medium text-neutral-900">
-            {services[current].title}
+            {items[current].titulo}
           </p>
           <p className="text-base text-neutral-500 mt-1">
-            {services[current].description}
+            {items[current].descricao}
           </p>
         </div>
 
@@ -168,7 +144,7 @@ export default function BeforeAfterCarousel() {
           </button>
 
           <div className="flex gap-2 items-center">
-            {services.map((_, i) => (
+            {items.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}

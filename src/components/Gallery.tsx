@@ -1,60 +1,26 @@
-// Criamos uma lista com links de imagens de exemplo (peguei do Unsplash).
-// Quando você for colocar as fotos do seu amigo, você vai trocar esses links.
-
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useState, useRef } from "react";
 import { X } from "lucide-react";
-
-const portfolioImages = [
-  {
-    id: 1,
-    type: "image",
-    url: "/images/banner1.jpeg",
-  },
-  {
-    id: 2,
-    type: "image",
-    url: "/images/depois1.jpeg",
-  },
-  {
-    id: 3,
-    type: "image",
-    url: "/images/servico.jpeg",
-  },
-  {
-    id: 4,
-    type: "image",
-    url: "/images/teto-pronto.jpeg",
-  },
-  {
-    id: 5,
-    type: "image",
-    url: "/images/teto-pronto4.jpeg",
-  },
-  {
-    id: 6,
-    type: "video",
-    url: "/videos/snapinsta.com.br-69c9cb3609e24.mp4",
-  },
-];
+import { useGaleria } from "../hooks/useGaleria";
+import type { GaleriaItem } from "../hooks/useGaleria";
 
 export function Gallery() {
+  const { items, carregando } = useGaleria();
   const [animating, setAnimating] = useState(false);
   const [direction, setDirection] = useState<"left" | "right">("right");
+  const [selectedItem, setSelectedItem] = useState<GaleriaItem | null>(null);
+  const [visible, setVisible] = useState(false);
+  const touchStartX = useRef<number>(0);
 
-  const [selectedImage, setSelectedImage] = useState<
-    (typeof portfolioImages)[0] | null
-  >(null);
-
-  const currentIndex = selectedImage
-    ? portfolioImages.findIndex((img) => img.id === selectedImage.id)
+  const currentIndex = selectedItem
+    ? items.findIndex((item) => item.id === selectedItem.id)
     : -1;
 
   const navigate = (nextIndex: number, dir: "left" | "right") => {
     setDirection(dir);
     setAnimating(true);
     setTimeout(() => {
-      setSelectedImage(portfolioImages[nextIndex]);
+      setSelectedItem(items[nextIndex]);
       setAnimating(false);
     }, 200);
   };
@@ -64,14 +30,10 @@ export function Gallery() {
     navigate(currentIndex - 1, "left");
   };
 
-  const [visible, setVisible] = useState(false);
-
   const goToNext = () => {
-    if (currentIndex >= portfolioImages.length - 1) return;
+    if (currentIndex >= items.length - 1) return;
     navigate(currentIndex + 1, "right");
   };
-
-  const touchStartX = useRef<number>(0);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -79,14 +41,25 @@ export function Gallery() {
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     const delta = touchStartX.current - e.changedTouches[0].clientX;
-    if (delta > 50) goToNext(); // arrastou pra esquerda → próxima
-    if (delta < -50) goToPrev(); // arrastou pra direita → anterior
+    if (delta > 50) goToNext();
+    if (delta < -50) goToPrev();
   };
 
   const closeLightbox = () => {
     setVisible(false);
-    setTimeout(() => setSelectedImage(null), 200);
+    setTimeout(() => setSelectedItem(null), 200);
   };
+
+  if (carregando)
+    return (
+      <section id="galeria" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <p className="text-gray-400">Carregando galeria...</p>
+        </div>
+      </section>
+    );
+
+  if (items.length === 0) return null;
 
   return (
     <section id="galeria" className="py-20 bg-white">
@@ -107,16 +80,16 @@ export function Gallery() {
                 grid grid-rows-2 grid-flow-col auto-cols-[42vw]
                 lg:auto-cols-auto lg:grid-rows-none lg:grid-flow-row"
         >
-          {portfolioImages.map((item) => (
+          {items.map((item) => (
             <div
               key={item.id}
               className="group relative overflow-hidden rounded-xl shadow-md cursor-pointer"
               onClick={() => {
-                setSelectedImage(item);
+                setSelectedItem(item);
                 setTimeout(() => setVisible(true), 10);
               }}
             >
-              {item.type === "video" ? (
+              {item.tipo === "video" ? (
                 <video
                   src={item.url}
                   className="w-full h-40 md:h-64 object-cover"
@@ -131,8 +104,7 @@ export function Gallery() {
                 />
               )}
 
-              {/* Ícone de play só aparece nos vídeos */}
-              {item.type === "video" && (
+              {item.tipo === "video" && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
                     <Play className="w-6 h-6 text-white fill-white" />
@@ -146,8 +118,7 @@ export function Gallery() {
         </div>
       </div>
 
-      {/* Lightbox */}
-      {selectedImage && (
+      {selectedItem && (
         <div
           className={`fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 transition-opacity duration-200 ${visible ? "opacity-100" : "opacity-0"}`}
           onClick={closeLightbox}
@@ -174,7 +145,7 @@ export function Gallery() {
             </button>
           )}
 
-          {currentIndex < portfolioImages.length - 1 && (
+          {currentIndex < items.length - 1 && (
             <button
               className="absolute right-4 text-white z-10"
               onClick={(e) => {
@@ -192,13 +163,13 @@ export function Gallery() {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            {selectedImage.type === "video" ? (
+            {selectedItem.tipo === "video" ? (
               <div
                 className="relative w-full"
                 style={{ paddingBottom: "56.25%" }}
               >
                 <video
-                  src={selectedImage.url}
+                  src={selectedItem.url}
                   className="absolute inset-0 w-full h-full rounded-xl"
                   controls
                   autoPlay
@@ -206,16 +177,16 @@ export function Gallery() {
               </div>
             ) : (
               <img
-                src={selectedImage.url}
+                src={selectedItem.url}
                 alt=""
                 className={`w-full max-h-[80vh] object-contain rounded-xl transition-all duration-200
-            ${animating ? (direction === "right" ? "-translate-x-8 opacity-0" : "translate-x-8 opacity-0") : "translate-x-0 opacity-100"}
-            ${visible && !animating ? "scale-100" : "scale-95"}
-          `}
+                  ${animating ? (direction === "right" ? "-translate-x-8 opacity-0" : "translate-x-8 opacity-0") : "translate-x-0 opacity-100"}
+                  ${visible && !animating ? "scale-100" : "scale-95"}
+                `}
               />
             )}
             <p className="text-gray-400 text-center text-sm mt-3">
-              {currentIndex + 1} / {portfolioImages.length}
+              {currentIndex + 1} / {items.length}
             </p>
           </div>
         </div>
