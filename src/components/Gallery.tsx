@@ -61,6 +61,13 @@ export function Gallery() {
 
   if (items.length === 0) return null;
 
+  const extrairId = (url: string) => {
+    const match = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+    );
+    return match ? match[1] : null;
+  };
+
   return (
     <section id="galeria" className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4">
@@ -89,7 +96,20 @@ export function Gallery() {
                 setTimeout(() => setVisible(true), 10);
               }}
             >
-              {item.tipo === "video" ? (
+              {item.tipo === "youtube" ? (
+                <div className="relative w-full h-40 md:h-64 bg-black flex items-center justify-center">
+                  <img
+                    src={`https://img.youtube.com/vi/${extrairId(item.url)}/hqdefault.jpg`}
+                    alt="thumbnail youtube"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
+                      <Play className="w-6 h-6 text-white fill-white" />
+                    </div>
+                  </div>
+                </div>
+              ) : item.tipo === "video" ? (
                 <video
                   src={item.url}
                   className="w-full h-40 md:h-64 object-cover"
@@ -163,7 +183,19 @@ export function Gallery() {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            {selectedItem.tipo === "video" ? (
+            {selectedItem.tipo === "youtube" ? (
+              <div
+                className="relative w-full"
+                style={{ paddingBottom: "56.25%" }}
+              >
+                <iframe
+                  src={`https://www.youtube.com/embed/${extrairId(selectedItem.url)}?autoplay=1`}
+                  className="absolute inset-0 w-full h-full rounded-xl"
+                  allowFullScreen
+                  allow="autoplay"
+                />
+              </div>
+            ) : selectedItem.tipo === "video" ? (
               <div
                 className="relative w-full"
                 style={{ paddingBottom: "56.25%" }}
@@ -180,9 +212,9 @@ export function Gallery() {
                 src={selectedItem.url}
                 alt=""
                 className={`w-full max-h-[80vh] object-contain rounded-xl transition-all duration-200
-                  ${animating ? (direction === "right" ? "-translate-x-8 opacity-0" : "translate-x-8 opacity-0") : "translate-x-0 opacity-100"}
-                  ${visible && !animating ? "scale-100" : "scale-95"}
-                `}
+      ${animating ? (direction === "right" ? "-translate-x-8 opacity-0" : "translate-x-8 opacity-0") : "translate-x-0 opacity-100"}
+      ${visible && !animating ? "scale-100" : "scale-95"}
+    `}
               />
             )}
             <p className="text-gray-400 text-center text-sm mt-3">
